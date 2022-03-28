@@ -1,0 +1,22 @@
+---
+title: |
+  **The use of eDNA by as a robust, efficient, method to assess remote coastal islands for invasive terrestrial mammals**
+author:
+  - D. Hynes, Coauthor_1, Coauthor_2
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    df_print: paged
+    css: sealIsland2021Fieldwork.css
+  word_document:
+    reference_docx: docx_template.docx # This you would need to create with the formatting of your choice.
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    latex_engine: pdflatex
+fontfamily: mathpazo
+fontsize: 11pt
+geometry: margin = 1in
+keywords: Keywords, Keyword, Key word, Word key
+bibliography: eDNA.bib # This file you create from your reference manager of choice
+csl: molecular-ecology.csl # This can be changed to your citation style of choice

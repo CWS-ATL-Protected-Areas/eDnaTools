@@ -1,4 +1,4 @@
-#This file maniupaltes the 
+#Clean and transform variables
 
 library(tidyverse)
 
@@ -71,3 +71,6 @@ finalDf <- data %>%
     str_detect(ecosystemNotes, "pan") ~ "Barachois",
     str_detect(ecosystemNotes, "Pond") ~ "Seep",
     str_detect(ecosystemNotes, "bog") ~ "Seep"))
+
+
+    

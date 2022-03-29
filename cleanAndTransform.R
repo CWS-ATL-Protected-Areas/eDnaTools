@@ -19,7 +19,7 @@ finalDf <- data %>%
   mutate(locality = case_when(str_detect(locality, "North Mud") ~ "Mud Island",
                               TRUE ~ locality)) %>% #fix name
   mutate(taxa = str_replace(taxa, pattern = "sp.", replacement = "")) %>%
-  filter(!sampleId %in% c(21, 65)) %>%
+  filter(!sampleId %in% c(21, 65)) %>% #remove controls
   mutate(qubitYieldNgPerMl = case_when(
     str_detect(qubitYieldNgPerMl, ">") ~ "12000", #
     TRUE ~ qubitYieldNgPerMl)) %>%
@@ -71,6 +71,39 @@ finalDf <- data %>%
     str_detect(ecosystemNotes, "pan") ~ "Barachois",
     str_detect(ecosystemNotes, "Pond") ~ "Seep",
     str_detect(ecosystemNotes, "bog") ~ "Seep"))
+
+#Summaries----
+
+sumData <- finalDf %>%
+  group_by(sampleId) %>%
+  mutate(detections = length(reads)) %>%
+  mutate(readsPerSampleId = sum(reads)) %>%
+  mutate(perReads = round(reads/sum(reads), 3)) %>%
+  ungroup() %>%
+  mutate(totalReads = sum(reads)) %>%
+  mutate(avePerRead = round(readsPerSampleId/totalReads*100, 1)) %>%
+  select("Sample Id" = sampleId, "Water (L)" = waterVolumeL, pH,
+                     "Temp (°C)" = tempCelsius, "TDS (ppm)" = tdsPpm, Conductivity = eC, 
+                     "DNA Yield" = qubitYieldNgPerMl, "No. of Taxon" = detections, "Reads (%)" = avePerRead)
+
+#Correlogram----
+
+
+corData <- sumData %>% group_by("Sample Id") %>% distinct(.keep_all = TRUE) 
+
+corFig <-
+  ggpairs(corData,
+          columns = 2:9,
+          lower = list(continuous = wrap(
+            "smooth",
+            size = 2.5,
+            alpha = 0.3
+          ))) +
+  theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+corFig
+
+
 
 
     

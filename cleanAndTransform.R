@@ -160,8 +160,8 @@ ggplot(barData, aes(x = fct_infreq(taxa), fill=rain)) +
 #sumData2 <- finalDf %>% group_by(taxa) %>% tally(reads)
 
 sumData2 <- finalDf %>%
-  mutate(taxa = case_when(str_detect(taxa, "Lavin") ~ "Leuciscidae",
-                    TRUE ~ taxa)) %>%
+  #mutate(taxa = case_when(str_detect(taxa, "Lavin") ~ "Leuciscidae",
+  #                  TRUE ~ taxa)) %>%
   group_by(taxa) %>%
   mutate(readsPerTaxon = sum(reads)) %>%
   mutate(readsT = round(readsPerTaxon^(1/3), 0)) %>%
@@ -173,16 +173,18 @@ sumData2 <- finalDf %>%
   #mutate(perReads = round(reads/sum(reads), 3)) %>%
   #mutate(totalReads = sum(reads)) %>%
   #mutate(avePerRead = round(readsPerSampleId/totalReads*100, 1)) %>%
-  select(taxa, readsT, occurPer) 
+  select(taxa, readsT, occurPer)
 
 sumData2 <- finalDf %>%
   mutate(taxa = case_when(str_detect(taxa, "Lavin") ~ "Leuciscidae",
                           TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Phoca") ~ "Phoca vitulina",
+                          TRUE ~ taxa)) %>%
   group_by(sampleId, taxa) %>%
   mutate(readsT = round(reads^(1/4), 1)) %>%
   select(sampleId, taxa, readsT) %>%
-  pivot_wider(names_from = sampleId, values_from = readsT)
-
+  pivot_wider(names_from = sampleId, values_from = readsT) 
+ # mutate_all(~replace_na(.,0))
 
 
 #speciesNames <- as.character(getNames[, 11])
@@ -252,8 +254,8 @@ ggtree(treeData) +
   geom_tiplab(offset = 60, fontface = 3) + xlim(0, 80) +
   theme(legend.position = c(.01, .85))  
 
-gheatmap(ggtree(treeData, right = TRUE), data=sum_numeric, colnames_angle=0, width = 40) + 
-  geom_tiplab(offset=330, fontface = 3) + hexpand(.2) + theme(legend.position = c(.01, .85))
+gheatmap(ggtree(treeData, right = TRUE), data=sum_numeric, colnames_angle=0, width = 40, color = "grey") + 
+  geom_tiplab(offset=329, fontface = 3) + hexpand(.1) + theme(legend.position = c(.01, .85))
 
 #Trees----
 # Fill in the taxonomic gaps for each identified taxa from the eDNA data, using the ncbi database
@@ -262,7 +264,36 @@ gheatmap(ggtree(treeData, right = TRUE), data=sum_numeric, colnames_angle=0, wid
 
 
 
-#getNames <- tax_name(sumData2$taxa, get = c("phylum", "class", "order", "suborder", "superfamily", "family", "subfamily", "genus", "species"), db = "ncbi")
+getNames <- tax_name(sumData2$taxa, get = c("phylum", "class", "order", "suborder", "superfamily", "family", "subfamily", "genus", "species"), db = "ncbi") %>%
+  rename(taxa = "query") %>% replace_na(list(class = "Reptilia")) %>%
+  inner_join(sumData2)
+
+getNames$pathString <- paste(getNames$phylum, getNames$class, getNames$order, getNames$suborder, getNames$superfamily, getNames$family, getNames$subfamily, getNames$genus, getNames$species, sep="/")
+
+getNames$pathString <- ""
+groups <- c("phylum", "class", "order", "suborder", "superfamily", "family", "subfamily", "genus", "species")
+
+for(i in 1:nrow(getNames)) {
+  isNA <- TRUE
+  
+  for(j in 11:3) {
+    if(isNA) {
+      if(!is.na(getNames[i,j])) {
+        getNames$pathString[i] <- paste(getNames[i,j], getNames$pathString[i], sep = "/")
+        isNA <- FALSE
+      }
+    } else {
+      getNames$pathString[i] <- paste(getNames[i,j], getNames$pathString[i], sep = "/")
+    }
+  }
+}
+
+write_csv(getNames, "C://Users/HynesD/eDnaTools/data/taxonNames.csv")
+
+tree <- as.Node(getNames)
+print(tree, "readsT")
+
+
 
 #newDf <- getNames %>% rename(taxa = "query") %>% inner_join(finalDf) %>% mutate(readsT = reads^(1/4)) %>% replace_na(list(class = "Reptilia"))
     
@@ -286,12 +317,12 @@ ggplot(data = newDf, aes(x = taxa, y = readsT, fill = waterbody)) +
 z2 <- z %>% group_by(taxa) %>% tally(reads)
 
 # Fill in the taxonomic gaps for each identified taxa from the eDNA data, using the ncbi database
-z3 <- tax_name(z2$taxa, get = c("phylum", "class", "order", "suborder", "superfamily", "family", "subfamily", "genus", "species"), db = "ncbi") %>%
+getNames <- tax_name(z2$taxa, get = c("phylum", "class", "order", "suborder", "superfamily", "family", "subfamily", "genus", "species"), db = "ncbi") %>%
   rename(taxa = "query") %>%
   inner_join(z2)
 
 2# String together the taxa into a pathString (used to create the tree below)
-z3$pathString <- paste(z3$phylum, z3$class, z3$order, z3$suborder, z3$superfamily, z3$family, z3$subfamily, z3$genus, z3$species, sep="/")
+getNames$pathString <- paste(z3$phylum, z3$class, z3$order, z3$suborder, z3$superfamily, z3$family, z3$subfamily, z3$genus, z3$species, sep="/")
 
 z3$pathString <- ""
 groups <- c("phylum", "class", "order", "suborder", "superfamily", "family", "subfamily", "genus", "species")

@@ -6,18 +6,96 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 
 library(tidyverse)
 library(taxize)
+library(data.tree)
+```
 
+# Notes on taxa
+
+To date, reads (i.e., sequences of base pairs that correspond to part of a DNA fragment) that correspond with 45 taxon have been detected from the 35 water samples (collected from islands Mud, Flat, Seal, and Boot). 
+
+
+```{r message = FALSE, echo=FALSE}
 
 #cleanData <- read_csv("C:/Users/HynesD/eDnaTools/cleanedData.csv")
 
+# getNames <-
+#   tax_name(
+#     sumData2$taxa,
+#     get = c(
+#       "phylum",
+#       "class",
+#       "order",
+#       "suborder",
+#       "superfamily",
+#       "family",
+#       "subfamily",
+#       "genus",
+#       "species"
+#     ),
+#     db = "ncbi"
+#   ) %>%
+#   rename(taxa = "query") %>% replace_na(list(class = "Reptilia")) %>%
+#   inner_join(sumData2)
+# 
+# getNames$pathString <-
+#   paste(
+#     getNames$phylum,
+#     getNames$class,
+#     getNames$order,
+#     getNames$suborder,
+#     getNames$superfamily,
+#     getNames$family,
+#     getNames$subfamily,
+#     getNames$genus,
+#     getNames$species,
+#     sep = "/"
+#   )
+# 
+# getNames$pathString <- ""
+# groups <-
+#   c(
+#     "phylum",
+#     "class",
+#     "order",
+#     "suborder",
+#     "superfamily",
+#     "family",
+#     "subfamily",
+#     "genus",
+#     "species"
+#   )
+# 
+# for (i in 1:nrow(getNames)) {
+#   isNA <- TRUE
+#   
+#   for (j in 11:3) {
+#     if (isNA) {
+#       if (!is.na(getNames[i, j])) {
+#         getNames$pathString[i] <-
+#           paste(getNames[i, j], getNames$pathString[i], sep = "/")
+#         isNA <- FALSE
+#       }
+#     } else {
+#       getNames$pathString[i] <-
+#         paste(getNames[i, j], getNames$pathString[i], sep = "/")
+#     }
+#   }
+# }
 
+#write_csv(getNames, "C://Users/HynesD/eDnaTools/data/taxonNames.csv")
+getNames <- read_csv("C://Users/HynesD/eDnaTools/data/taxonNames.csv")
+
+#rodents <- getNames %>% filter(order %in% c("Rodentia"))
+tree <- as.Node(getNames)
+print(tree, "readsT", limit = 22)
 ```
 
-#Notes on taxa----
+
+
 
 #Muroidea - Superfamily rats, mice, voles, 
 #Cricetidae - Muskrat Family - new world rats and mice, voles, Myodes, Microtus, Lemmus, etc. deer mouse

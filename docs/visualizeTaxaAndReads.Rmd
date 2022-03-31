@@ -12,7 +12,7 @@ library(tidyverse)
 library(taxize)
 
 
-cleanData <- read_csv("C:/Users/HynesD/eDnaTools/cleanedData.csv")
+#cleanData <- read_csv("C:/Users/HynesD/eDnaTools/cleanedData.csv")
 
 
 ```

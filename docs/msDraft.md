@@ -1,7 +1,22 @@
-Visualizing taxa
+The use of eDNA to assess remote coastal islands for the presence of
+invasive terrestrial mammals
 ================
 Doug Hynes
 2022-04-01
+
+### **Abstract**
+
+Coastal islands face grave threats such as sea level rise, development,
+and biological invasions. Yet, in many areas, basic knowledge of the
+prevalence of island dwelling species and the pressures that limit their
+persistence is often lacking. Biological inventories can help fill these
+knowledge gaps and inform converation actions, but are hindered by the
+logistics and costs of conducting offshore or nearshore fieldwork. In
+light of the need for environmental practitioners to be able to survey
+islands robustly and efficiently, we test off-the-shelf commmerical
+environmental DNA water samplers and commerical metabarcoding lab
+services as ways to enable rapid inventories of coastal islands for
+mammalian biodiversity and invasive terrestrial threats.
 
 To date, reads (i.e., sequences of base pairs that correspond to part of
 a DNA fragment) that correspond with 45 taxon have been detected from

@@ -164,7 +164,7 @@ sumData2 <- finalDf %>%
   #                  TRUE ~ taxa)) %>%
   group_by(taxa) %>%
   mutate(readsPerTaxon = sum(reads)) %>%
-  mutate(readsT = round(readsPerTaxon^(1/3), 0)) %>%
+  mutate(readsT = round(readsPerTaxon^(1/4), 0)) %>%
   mutate(occur = n()) %>%
   mutate(occurPer = round(occur/35*100, 0)) %>%
   distinct(taxa, .keep_all = TRUE) %>%

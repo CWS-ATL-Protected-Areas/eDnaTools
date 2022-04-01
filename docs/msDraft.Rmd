@@ -3,6 +3,8 @@ title: "The use of eDNA to assess remote coastal islands for the presence of inv
 author: "Doug Hynes"
 date: "`r Sys.Date()`"
 output: github_document
+bibliography: eDNA.bib
+csl: molecular-ecology.csl
 ---
 
 ```{r setup, include=FALSE}
@@ -13,110 +15,30 @@ library(taxize)
 library(data.tree)
 ```
 
-### **Abstract**
+**Abstract**–Coastal islands face grave threats such as sea level rise, development, and biological invasions. Yet, in many areas, basic knowledge of the prevalence of island dwelling species and the pressures that limit their persistence is often lacking. Biological inventories can help fill these knowledge gaps and inform conversation actions, but are hindered by the logistics and costs of conducting offshore or nearshore fieldwork. In light of the need for environmental practitioners to be able to survey islands robustly and efficiently, we test off-the-shelf commercial environmental DNA water samplers and commercial metabarcoding lab services as ways to enable rapid inventories of coastal islands for mammalian biodiversity and invasive terrestrial threats...
 
-Coastal islands face grave threats such as sea level rise, development, and biological invasions. Yet, in many areas, basic knowledge of the prevalence of island dwelling species and the pressures that limit their persistence is often lacking. Biological inventories can help fill these knowledge gaps and inform converation actions, but are hindered by the logistics and costs of conducting offshore or nearshore fieldwork. In light of the need for environmental practitioners to be able to survey islands robustly and efficiently, we test off-the-shelf commmerical environmental DNA water samplers and commerical metabarcoding lab services as ways to enable rapid inventories of coastal islands for mammalian biodiversity and invasive terrestrial threats.
+## Introduction
+
+Using environmental DNA to detect the presence of terrestrial, aquatic, or semi-aquatic organisms has been well established over the past decade and a half [@ficetola_species_2008; @harper_environmental_2019; @sales_fishing_2020; @leempoel_comparison_2020; @lyet_edna_2021; @neice_edna_2021; @saenz-agudelo_monitoring_2022]. More recently, there has been a massive increase in studies, by experts and non-experts alike, that tout the potential of eDNA to transform conservation projects through biodiversity monitoring. Indeed, eDNA methods appear to offer conservation practitioners–who are often work within a crisis-driven field and are faced with severe time and resource constraints when it comes to acquiring ecological data–a revolutionary tool; too often their is a lack of data and evidence underpinning environmental management. But as citizen scientists, communities, and practitioners from various backgrounds begin to foray into eDNA methods [@thomsen_environmental_2015; @biggs_using_2015; @yang_recent_2021; @loeza-quintana_environmental_2021], it remains to be seen exactly how, where, and when, this new tool can be utilized to inform long term conservation management.    
+
+We sampled environmental DNA, extracted from water, to assess terrestrial mammalian threats and a "biodiversity bonus", on coastal islands situated in a logistically challenging, ecologically threatened, maritime landscape. Our study sites fall within an archipelago in the province of Nova Scotia, Canada, which consists of some 4000 islands and skerries, many of which are threatened by rising sea levels, biological invasions, and human development. Such coastal landscapes in Atlantic Canada have long relied on de facto conservation, due to in part to the remoteness of islands. As conservation organizations and governments move to prioritize the securement of new island landholdings, and boost legal protection of existing island holdings, there is increased need for rapid, cost-efficient assessment of island biodiversity and threats. Thus, our objective is to test the use of eDNA as a tool to provide such assessments, from the perspective of environmental practitioners in need of system that combines ease-of-use, robustness, and quality assurance. Specifically, we aimed to assess the diversity of problematic native and invasive terrestrial mammals on islands, as a necessary first step of implementation of a science-based conservation management and decision-making, by providing detailed, on-the-ground assessments of species and their threats (cite CS or others?). 
+
+
+How robust is the technology? 
+Other applications? Some studies show a correlation between the eDNA concentration and abundance [@everts_accurate_2021] 
+
+Alternative, direct methods of sampleing mammals include infrared cameras, hair tunnels, cage and snap trapping, some of which require intensive training, frequency checking, and extra levels of approvals and permitting.
+
+As conservation actions are largely based on fine-scale knowledge about species distributions and their threats, we aim to: 1) conduct holistic inventories of problematic mammal species in a key coastal islands that haven not been recently evaluated, and 2) find ways to improve monitoring of wildlife and their threats by deploying new detection methods for invasive and problematic species through use of eDNA methods. Our studies will help assess the ecological value of the region, and inform decision makers involved in the transfer of lands for inclusion within the protected areas network known as the Atlantic Canada Archipelago. 
+
+Discussion–we believe knowledge generated from eDNA may help identify and develop threat mitigation strategies and inform any future whole island restoration efforts. 
+
+## Methods
+
+We collected water samples from 35 sites on four islands (Seal, Mud, Flat, and Boot) in Nova Scotia, Canada, during the fall of 2021. we collected 30 water samples for eDNA analysis (nsamples in parentheses), across Mud Island (2), Flat Island (2), Boot Island (5), and Seal Island (26). We filtered distilled water in the same manner as the other field samples, as a negative control. All samples were collected using a Smith-Root backpack sampler and self-preserving 1.2 micron filters. Samples were submitted to Precision Biomonitoring for analysis. Lab analysis will employ MiMammal universal primers, primers that have previously been shown to detect North American mammal species.
+
+## Results
 
 To date, reads (i.e., sequences of base pairs that correspond to part of a DNA fragment) that correspond with 45 taxon have been detected from the 35 water samples (collected from islands Mud, Flat, Seal, and Boot). 
 
-
-```{r message = FALSE, echo=FALSE, comment=NA}
-
-#cleanData <- read_csv("C:/Users/HynesD/eDnaTools/cleanedData.csv")
-
-# getNames <-
-#   tax_name(
-#     sumData2$taxa,
-#     get = c(
-#       "phylum",
-#       "class",
-#       "order",
-#       "suborder",
-#       "superfamily",
-#       "family",
-#       "subfamily",
-#       "genus",
-#       "species"
-#     ),
-#     db = "ncbi"
-#   ) %>%
-#   rename(taxa = "query") %>% replace_na(list(class = "Reptilia")) %>%
-#   inner_join(sumData2)
-# 
-# getNames$pathString <-
-#   paste(
-#     getNames$phylum,
-#     getNames$class,
-#     getNames$order,
-#     getNames$suborder,
-#     getNames$superfamily,
-#     getNames$family,
-#     getNames$subfamily,
-#     getNames$genus,
-#     getNames$species,
-#     sep = "/"
-#   )
-# 
-# getNames$pathString <- ""
-# groups <-
-#   c(
-#     "phylum",
-#     "class",
-#     "order",
-#     "suborder",
-#     "superfamily",
-#     "family",
-#     "subfamily",
-#     "genus",
-#     "species"
-#   )
-# 
-# for (i in 1:nrow(getNames)) {
-#   isNA <- TRUE
-#   
-#   for (j in 11:3) {
-#     if (isNA) {
-#       if (!is.na(getNames[i, j])) {
-#         getNames$pathString[i] <-
-#           paste(getNames[i, j], getNames$pathString[i], sep = "/")
-#         isNA <- FALSE
-#       }
-#     } else {
-#       getNames$pathString[i] <-
-#         paste(getNames[i, j], getNames$pathString[i], sep = "/")
-#     }
-#   }
-# }
-
-#write_csv(getNames, "C://Users/HynesD/eDnaTools/data/taxonNames.csv")
-getNames <- read_csv("C://Users/HynesD/eDnaTools/data/taxonNames.csv")
-
-rodents <- getNames %>% filter(order %in% c("Rodentia"))
-tree <- as.Node(rodents)
-#rodents <- tree$Rodentia
-#Sort(northAm, "GNI", decreasing = TRUE)
-#print(rodents, "readsT")
-print(tree, "readsT", pruneMethod = "simple")
-```
-
-
-
-
-Muroidea - a superfamily consisting of rats, mice, voles  
-Murinae - subfamily old world rats and mice  
-Cricetidae - new world rats and mice, voles (e.g. *Myodes*, *Microtus*, *Lemmus*, *Peromyscus*)  
-Arvicolinae - subfamily, includes muskrat  
-
-Lagamorpha - i.e., Lepus americanus  
-Leporidae i.e., Lepus americanus  
-Lepus
-
-Sus - domestic pig  
-
-Soricidae - Probably represents masked shrew; less probable smokey shrew or others  
-Soricinae - sunfamily, includes *Sorex* (e.g., *Blarina*)  
-Sorex - genus includes smoky shrew, water shrew, etc.  
-
-Leuciscidae - true minnows  
-Fundulus - more than one species of *Fundulus* possible across study extent
-
+## Literature Cited

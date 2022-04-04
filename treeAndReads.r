@@ -148,4 +148,4 @@ p2 <- ggplot(sumData3, aes(x=factor(sampleId), y=taxa)) +
 
 p3 <- p2 %>% insert_left(p, width = 0.36)
 
-p3
+print(p3)

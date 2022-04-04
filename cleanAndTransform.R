@@ -143,33 +143,46 @@ sumData3 <- finalDf %>%
                           TRUE ~ taxa)) %>%
   mutate(taxa = case_when(str_detect(taxa, "Equus") ~ "Equus caballus",
                           TRUE ~ taxa)) %>%
-  group_by(sampleId, taxa) %>%
+  group_by(locality,sampleId, taxa) %>%
   mutate(readsT = round(reads^(1/4), 1)) %>%
-  select(sampleId, taxa, readsT) %>%
+  select(locality, sampleId, taxa, readsT) %>%
   filter(taxa %in% tre$tip.label) %>% 
   ungroup() %>%
-  complete(sampleId, taxa) %>% replace_na(list(readsT = 0))
+  complete(sampleId, taxa) %>% replace_na(list(readsT = 0)) %>% 
+  mutate_at(vars(locality), as.factor) %>%
+  mutate_at(vars(sampleId), as.factor)
 
-p2 <- ggplot(sumData3, aes(x=factor(sampleId), y=taxa)) + 
-  geom_tile(aes(fill=readsT), color = "gray") + scale_fill_scico(palette = "devon", direction = -1, begin = 0) + 
+sumData3$locality <- recode_factor(sumData3$locality, "Seal Island" = "Seal", 
+                              "Mud Island" = "Mud", "Flat Island" = "Flat", "Boot Island" = "Boot")
+
+p2 <- ggplot(na.omit(sumData3), aes(x= sampleId, y=taxa, fill=readsT)) + 
+  geom_tile(color = "gray") + 
+  facet_grid(~fct_relevel(locality, 'Mud','Seal','Flat','Boot'), switch = "x", scales = "free_x", space = "free_x") +
+  scale_fill_scico(palette = "devon", direction = -1, begin = 0) + 
   xlab("Sample ID") + ylab(NULL) + labs(fill = expression(sqrt("No. of Reads", 4))) +
-  theme(axis.text.y=element_blank()) +
   scale_x_discrete(expand = c(0,0)) +
   scale_y_discrete(expand = c(0,0)) +
-  theme(legend.title = element_text(size = 13)) +
   theme(
+    panel.spacing = unit(0, "lines"),
+    legend.title = element_text(size = 13),
     axis.ticks.length.x = unit(0.15, "cm"),
     axis.ticks.length.y = unit(0.15, "cm"),
-    panel.background = element_blank()) 
+    panel.background = element_blank(),
+    axis.text.y=element_blank(),
+    strip.placement = "outside",
+    strip.background =element_rect(fill="white", color = "black", size = 1),
+    )
 
-
+p2
 p3 <- p2 %>% insert_left(p, width = 0.36)
 
 p3
 
 
-
-
+ggplot(df1, aes(x = variable, y = fact, fill = value)) +
+  geom_tile() +
+  facet_grid(subgroup~., scales="free_y") +
+  theme(axis.text.y = element_blank())
 
 
 

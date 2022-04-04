@@ -9,6 +9,13 @@ library(ggtree)
 
 ## ---- tree --------
 
+library(tidyverse)
+library(rotl)
+library(ggtree)
+library(phylobase)
+library(aplot)
+library(scico)
+
 data <- read_csv("C:/Users/HynesD/Documents/eDNA/eDnaCombined.csv")
 
 finalDf <- data %>% 
@@ -83,6 +90,47 @@ finalDf <- data %>%
     str_detect(ecosystemNotes, "bog") ~ "Seep"
   )) 
 
+sumData2 <- finalDf %>%
+  mutate(taxa = case_when(str_detect(taxa, "Lavin") ~ "Leuciscidae",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Phoca") ~ "Phoca vitulina",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Esociformes") ~ "Esox niger",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Sus") ~ "Sus scrofa domesticus",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Equus") ~ "Equus caballus",
+                          TRUE ~ taxa)) %>%
+  group_by(sampleId, taxa) %>%
+  mutate(readsT = round(reads^(1/4), 1)) %>%
+  select(sampleId, taxa, readsT) %>%
+  pivot_wider(names_from = sampleId, values_from = readsT) 
+
+
+taxonSearch <- tnrs_match_names(names = sumData2$taxa, context_name = "All life")
+sumData2$ottName <- unique_name(taxonSearch)
+sumData2$ottId <- taxonSearch$ott_id
+ottInTree <- ott_id(taxonSearch)[is_in_tree(ott_id(taxonSearch))]
+tre <- tol_induced_subtree(ott_ids = ottInTree)
+tre$tip.label <- strip_ott_ids(tre$tip.label, remove_underscores = TRUE)
+tre$tip.label %in% sumData2$ottName
+
+sum_numeric <- sumData2[, c(2:36)]
+rownames(sum_numeric) <- sumData2$ottName
+treeData <- phylo4d(tre, sum_numeric)
+
+p <- ggtree(treeData) + geom_tiplab(fontface = 3) + ggexpand(5, side = "h") + 
+  geom_cladelab(24, "Mammals", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
+  geom_cladelab(36, "Bird/Reptile", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
+  geom_cladelab(37, "Fish", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")
+
+
+
+# p2 <- ggplot(sumData3, aes(x=factor(sampleId), y=taxa)) + 
+#   geom_tile(aes(fill=readsT)) + scale_fill_viridis_c() + 
+#   theme_minimal() + xlab("Sample ID") + ylab(NULL) + labs(fill = expression(sqrt(Reads, 4))) +
+#   theme(axis.text.y=element_blank()) +
+#   theme(legend.title = element_text(size = 13)) 
 
 sumData3 <- finalDf %>%
   mutate(taxa = case_when(str_detect(taxa, "Lavin") ~ "Leuciscidae",
@@ -101,19 +149,6 @@ sumData3 <- finalDf %>%
   filter(taxa %in% tre$tip.label) %>% 
   ungroup() %>%
   complete(sampleId, taxa) %>% replace_na(list(readsT = 0))
-
-p <- ggtree(treeData) + geom_tiplab(fontface = 3) + ggexpand(5, side = "h") + 
-  geom_cladelab(24, "Mammals", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
-  geom_cladelab(36, "Bird/Reptile", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
-  geom_cladelab(37, "Fish", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")
-
-
-
-# p2 <- ggplot(sumData3, aes(x=factor(sampleId), y=taxa)) + 
-#   geom_tile(aes(fill=readsT)) + scale_fill_viridis_c() + 
-#   theme_minimal() + xlab("Sample ID") + ylab(NULL) + labs(fill = expression(sqrt(Reads, 4))) +
-#   theme(axis.text.y=element_blank()) +
-#   theme(legend.title = element_text(size = 13)) 
 
 p2 <- ggplot(sumData3, aes(x=factor(sampleId), y=taxa)) + 
   geom_tile(aes(fill=readsT), color = "gray") + scale_fill_scico(palette = "devon", direction = -1, begin = 0) + 
@@ -233,7 +268,7 @@ sumData2 <- finalDf %>%
   #mutate(perReads = round(reads/sum(reads), 3)) %>%
   #mutate(totalReads = sum(reads)) %>%
   #mutate(avePerRead = round(readsPerSampleId/totalReads*100, 1)) %>%
-  select(taxa, readsT, occurPer)
+  select(taxa, readsT)
 
 sumData2 <- finalDf %>%
   mutate(taxa = case_when(str_detect(taxa, "Lavin") ~ "Leuciscidae",

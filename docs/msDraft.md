@@ -102,6 +102,8 @@ To date, reads (i.e., sequences of base pairs that correspond to part of
 a DNA fragment) that correspond with 45 taxon have been detected from
 the 35 water samples (collected from islands Mud, Flat, Seal, and Boot).
 
+                                                            ![](msDraft_files/figure-gfm/tree-reads-1.png)<!-- -->
+
 ## Literature Cited
 
 <div id="refs" class="references csl-bib-body hanging-indent"

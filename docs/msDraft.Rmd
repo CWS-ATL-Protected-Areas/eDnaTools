@@ -48,8 +48,7 @@ To date, reads (i.e., sequences of base pairs that correspond to part of a DNA f
 knitr::read_chunk("C://Users/HynesD/eDnaTools/treeAndReads.R")
 ```
 
-```{r, tree and reads, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=7}
-
+```{r, tree-reads, message=FALSE, warning=FALSE, fig.width=12, fig.height=9}
 ```
 
 

@@ -7,7 +7,8 @@ library(taxize)
 library(rotl)
 library(ggtree)
 
-#Import CSV----
+## ---- tree --------
+
 data <- read_csv("C:/Users/HynesD/Documents/eDNA/eDnaCombined.csv")
 
 finalDf <- data %>% 
@@ -82,6 +83,61 @@ finalDf <- data %>%
     str_detect(ecosystemNotes, "bog") ~ "Seep"
   )) 
 
+
+sumData3 <- finalDf %>%
+  mutate(taxa = case_when(str_detect(taxa, "Lavin") ~ "Leuciscidae",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Phoca") ~ "Phoca vitulina",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Esociformes") ~ "Esox niger",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Sus") ~ "Sus scrofa domesticus",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Equus") ~ "Equus caballus",
+                          TRUE ~ taxa)) %>%
+  group_by(sampleId, taxa) %>%
+  mutate(readsT = round(reads^(1/4), 1)) %>%
+  select(sampleId, taxa, readsT) %>%
+  filter(taxa %in% tre$tip.label) %>% 
+  ungroup() %>%
+  complete(sampleId, taxa) %>% replace_na(list(readsT = 0))
+
+p <- ggtree(treeData) + geom_tiplab(fontface = 3) + ggexpand(5, side = "h") + 
+  geom_cladelab(24, "Mammals", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
+  geom_cladelab(36, "Bird/Reptile", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
+  geom_cladelab(37, "Fish", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")
+
+
+
+# p2 <- ggplot(sumData3, aes(x=factor(sampleId), y=taxa)) + 
+#   geom_tile(aes(fill=readsT)) + scale_fill_viridis_c() + 
+#   theme_minimal() + xlab("Sample ID") + ylab(NULL) + labs(fill = expression(sqrt(Reads, 4))) +
+#   theme(axis.text.y=element_blank()) +
+#   theme(legend.title = element_text(size = 13)) 
+
+p2 <- ggplot(sumData3, aes(x=factor(sampleId), y=taxa)) + 
+  geom_tile(aes(fill=readsT), color = "gray") + scale_fill_scico(palette = "devon", direction = -1, begin = 0) + 
+  xlab("Sample ID") + ylab(NULL) + labs(fill = expression(sqrt("No. of Reads", 4))) +
+  theme(axis.text.y=element_blank()) +
+  scale_x_discrete(expand = c(0,0)) +
+  scale_y_discrete(expand = c(0,0)) +
+  theme(legend.title = element_text(size = 13)) +
+  theme(
+    axis.ticks.length.x = unit(0.15, "cm"),
+    axis.ticks.length.y = unit(0.15, "cm"),
+    panel.background = element_blank()) 
+
+
+p3 <- p2 %>% insert_left(p, width = 0.36)
+
+p3
+
+
+
+
+
+
+
 #Summaries----
 
 sumData <- finalDf %>%
@@ -141,6 +197,10 @@ ggplot(barData, aes(x = fct_infreq(taxa), fill=rain)) +
 
 #Analysis of taxa----
 
+library(rotl)
+library(ggtree)
+library(phylobase)
+
 #Muroidea - Superfamily rats, mice, voles, 
 #Cricetidae - Muskrat Family - new world rats and mice, voles, Myodes, Microtus, Lemmus, etc. deer mouse
 #Arvicolinae - subfamily - muskrat
@@ -179,6 +239,12 @@ sumData2 <- finalDf %>%
   mutate(taxa = case_when(str_detect(taxa, "Lavin") ~ "Leuciscidae",
                           TRUE ~ taxa)) %>%
   mutate(taxa = case_when(str_detect(taxa, "Phoca") ~ "Phoca vitulina",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Esociformes") ~ "Esox niger",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Sus") ~ "Sus scrofa domesticus",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Equus") ~ "Equus caballus",
                           TRUE ~ taxa)) %>%
   group_by(sampleId, taxa) %>%
   mutate(readsT = round(reads^(1/4), 1)) %>%
@@ -254,8 +320,65 @@ ggtree(treeData) +
   geom_tiplab(offset = 60, fontface = 3) + xlim(0, 80) +
   theme(legend.position = c(.01, .85))  
 
+
+p <- ggtree(treeData) + geom_tiplab() + hexpand(5) + vexpand(0.1)
+p
+gheatmap(p, sum_numeric, offset = 8.5, legend_title = expression(sqrt(Reads, 4))) +  hexpand(0.1)
+
+
+
 gheatmap(ggtree(treeData, right = TRUE), data=sum_numeric, colnames_angle=0, width = 40, color = "grey") + 
-  geom_tiplab(offset=329, fontface = 3) + hexpand(.1) + theme(legend.position = c(.01, .85))
+  geom_tiplab(offset=329, fontface = 3) + hexpand(.1) + theme(legend.position = c(.01, .85)) + theme_tree()
+
+
+sumData3 <- finalDf %>%
+  mutate(taxa = case_when(str_detect(taxa, "Lavin") ~ "Leuciscidae",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Phoca") ~ "Phoca vitulina",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Esociformes") ~ "Esox niger",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Sus") ~ "Sus scrofa domesticus",
+                          TRUE ~ taxa)) %>%
+  mutate(taxa = case_when(str_detect(taxa, "Equus") ~ "Equus caballus",
+                          TRUE ~ taxa)) %>%
+  group_by(sampleId, taxa) %>%
+  mutate(readsT = round(reads^(1/4), 1)) %>%
+  select(sampleId, taxa, readsT) %>%
+  filter(taxa %in% tre$tip.label) %>% ungroup()
+
+ss <- sumData3 %>% complete(sampleId, taxa) %>% replace_na(list(readsT = 0))
+
+p <- ggtree(treeData) + geom_tiplab(fontface = 3) + ggexpand(5, side = "h") + 
+  geom_cladelab(24, "Mammals", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
+  geom_cladelab(36, "Bird/Reptile", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
+  geom_cladelab(37, "Fish", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")
+
+p
+
+# p2 <- ggplot(sumData3, aes(x=factor(sampleId), y=taxa)) + 
+#   geom_tile(aes(fill=readsT)) + scale_fill_viridis_c() + 
+#   theme_minimal() + xlab("Sample ID") + ylab(NULL) + labs(fill = expression(sqrt(Reads, 4))) +
+#   theme(axis.text.y=element_blank()) +
+#   theme(legend.title = element_text(size = 13)) 
+
+p2 <- ggplot(ss, aes(x=factor(sampleId), y=taxa)) + 
+  geom_tile(aes(fill=readsT), color = "gray") + scale_fill_scico(palette = "devon", direction = -1, begin = 0) + 
+  xlab("Sample ID") + ylab(NULL) + labs(fill = expression(sqrt("No. of Reads", 4))) +
+  theme(axis.text.y=element_blank()) +
+  scale_x_discrete(expand = c(0,0)) +
+  scale_y_discrete(expand = c(0,0)) +
+  theme(legend.title = element_text(size = 13)) +
+  theme(
+    axis.ticks.length.x = unit(0.15, "cm"),
+    axis.ticks.length.y = unit(0.15, "cm"),
+    panel.background = element_blank()) 
+
+p2
+
+p2 %>% insert_left(p, width = 0.36)
+
+ggsave("C://Users/HynesD/Desktop/test.png")
 
 #Trees----
 # Fill in the taxonomic gaps for each identified taxa from the eDNA data, using the ncbi database
@@ -347,3 +470,6 @@ tree <- as.Node(z3)
 print(tree, "n")
 plot(tree, "n")
 t <- as.data.frame(tree)
+
+## ---- test-a --------
+1 + 1

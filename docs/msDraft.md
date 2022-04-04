@@ -2,7 +2,7 @@ The use of eDNA to assess remote coastal islands for the presence of
 invasive terrestrial mammals
 ================
 Doug Hynes
-2022-04-01
+2022-04-04
 
 **Abstract**–Coastal islands face grave threats such as sea level rise,
 development, and biological invasions. Yet, in many areas, basic
@@ -30,7 +30,7 @@ projects through biodiversity monitoring. Indeed, eDNA methods appear to
 offer conservation practitioners–who are often work within a
 crisis-driven field and are faced with severe time and resource
 constraints when it comes to acquiring ecological data–a revolutionary
-tool; too often their is a lack of data and evidence underpinning
+tool; too often there is a lack of data and evidence underpinning
 environmental management. But as citizen scientists, communities, and
 practitioners from various backgrounds begin to foray into eDNA methods
 (Biggs et al., 2015; Loeza-Quintana et al., 2021; Thomsen & Willerslev,
@@ -63,7 +63,7 @@ How robust is the technology? Other applications? Some studies show a
 correlation between the eDNA concentration and abundance (Everts et al.,
 2021)
 
-Alternative, direct methods of sampleing mammals include infrared
+Alternative, direct methods of sampling mammals include infrared
 cameras, hair tunnels, cage and snap trapping, some of which require
 intensive training, frequency checking, and extra levels of approvals
 and permitting.

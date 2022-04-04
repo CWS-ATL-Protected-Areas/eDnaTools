@@ -45,10 +45,11 @@ To date, reads (i.e., sequences of base pairs that correspond to part of a DNA f
 
 ```{r, include=FALSE, cache=FALSE}
 
-knitr::read_chunk("C://Users/HynesD/eDnaTools/cleanAndTransform.R")
+knitr::read_chunk("C://Users/HynesD/eDnaTools/treeAndReads.R")
 ```
 
-```{r, tree, echo=FALSE}
+```{r, tree and reads, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=7}
+
 ```
 
 

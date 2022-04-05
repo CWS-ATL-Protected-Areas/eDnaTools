@@ -38,7 +38,13 @@ Discussion–we believe knowledge generated from eDNA may help identify and deve
 
 We collected water samples from 35 sites on four islands (Seal, Mud, Flat, and Boot) in Nova Scotia, Canada, during the fall of 2021. we collected 30 water samples for eDNA analysis (nsamples in parentheses), across Mud Island (2), Flat Island (2), Boot Island (5), and Seal Island (26). We filtered distilled water in the same manner as the other field samples, as a negative control. All samples were collected using a Smith-Root backpack sampler and self-preserving 1.2 micron filters. Samples were submitted to Precision Biomonitoring for analysis. Lab analysis will employ MiMammal universal primers, primers that have previously been shown to detect North American mammal species.
 
+```{r, include=FALSE, cache=FALSE}
 
+knitr::read_chunk("C://Users/HynesD/eDnaTools/maps.r")
+```
+
+```{r, map, message=FALSE, warning=FALSE, fig.width=11.5, fig.height=6}
+```
 
 
 ## Results

@@ -110,9 +110,9 @@ rownames(sum_numeric) <- sumData2$ottName
 treeData <- phylo4d(tre, sum_numeric)
 
 p <- ggtree(treeData) + geom_tiplab(fontface = 3) + ggexpand(5, side = "h") + 
-  geom_cladelab(24, "Mammals", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
-  geom_cladelab(36, "Bird/Reptile", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
-  geom_cladelab(37, "Fish", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")
+  geom_cladelab(24, "Mammalia", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
+  geom_cladelab(36, "Aves/Reptilia", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
+  geom_cladelab(37, "Actinopterygii", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")
 
 
 sumData3 <- finalDf %>%
@@ -139,7 +139,7 @@ p2 <- ggplot(sumData3, aes(x=factor(sampleId), y=taxa)) +
   theme(axis.text.y=element_blank()) +
   scale_x_discrete(expand = c(0,0)) +
   scale_y_discrete(expand = c(0,0)) +
-  theme(legend.title = element_text(size = 13)) +
+  theme(legend.title = element_text(size = 11)) +
   theme(
     axis.ticks.length.x = unit(0.15, "cm"),
     axis.ticks.length.y = unit(0.15, "cm"),

@@ -6,12 +6,6 @@ library(DiagrammeR)
 library(taxize)
 library(rotl)
 library(ggtree)
-
-## ---- tree --------
-
-library(tidyverse)
-library(rotl)
-library(ggtree)
 library(phylobase)
 library(aplot)
 library(scico)

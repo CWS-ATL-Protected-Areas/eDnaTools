@@ -3,10 +3,16 @@
 library(sf)
 library(tidyverse)
 library(ggspatial)
-library(cowplot)
+library(patchwork)
+library(ggrepel)
 
 
-isl <- st_read("C://Users/HynesD/eDnaTools/images/fourIslands.gpkg", quiet = TRUE)
+
+ns <- st_read("C://Users/HynesD/eDnaTools/data/novaScotia.gpkg", quiet = TRUE)
+boot <- st_read("C://Users/HynesD/eDnaTools/data/bootIsland.gpkg" , quiet = TRUE)
+flat <- st_read("C://Users/HynesD/eDnaTools/data/flatIsland.gpkg", quiet = TRUE)
+mud <- st_read("C://Users/HynesD/eDnaTools/data/mudIsland.gpkg", quiet = TRUE)
+seal <- st_read("C://Users/HynesD/eDnaTools/data/sealIsland.gpkg", quiet = TRUE)
 
 data <- read_csv("C:/Users/HynesD/Documents/eDNA/eDnaCombined.csv")
 
@@ -81,41 +87,118 @@ locs <- data %>%
     str_detect(ecosystemNotes, "Small bog upstream") ~ "Brackish",
     str_detect(ecosystemNotes, "bog") ~ "Seep"
   )) %>%
-  select(sampleId, lon = longitude, lat = latitude) %>% distinct(sampleId, .keep_all = TRUE) %>% 
-  st_as_sf(coords = c("lon", "lat"), crs = 4326)
+  mutate(site = case_when(
+    sampleId == "12" ~ "M1",
+    sampleId == "15" ~ "M1",
+    sampleId == "40" ~ "S1",
+    sampleId == "41" ~ "S1",
+    sampleId == "42" ~ "S2",
+    sampleId == "43" ~ "S3",
+    sampleId == "38" ~ "S4",
+    sampleId == "39" ~ "S4",
+    sampleId == "37" ~ "S5",
+    sampleId == "53" ~ "S6",
+    sampleId == "33" ~ "S6",
+    sampleId == "44" ~ "S7",
+    sampleId == "35" ~ "S8",
+    sampleId == "52" ~ "S8",
+    sampleId == "34" ~ "S8",
+    sampleId == "32" ~ "S9",
+    sampleId == "51" ~ "S9",
+    sampleId == "49" ~ "S10",
+    sampleId == "50" ~ "S11",
+    sampleId == "31" ~ "S11",
+    sampleId == "48" ~ "S12",
+    sampleId == "30" ~ "S12",
+    sampleId == "45" ~ "S13",
+    sampleId == "23" ~ "S14",
+    sampleId == "25" ~ "S15",
+    sampleId == "27" ~ "S16",
+    sampleId == "28" ~ "S17",
+    sampleId == "29" ~ "S17",
+    sampleId == "55" ~ "F1",
+    sampleId == "54" ~ "F2",
+    sampleId == "62" ~ "B1",
+    sampleId == "61" ~ "B2",
+    sampleId == "60" ~ "B3",
+    sampleId == "64" ~ "B4",
+    sampleId == "63" ~ "B5")) %>%
+  select(sampleId, site, lon = longitude, lat = latitude) %>% distinct(sampleId, .keep_all = TRUE) %>% 
+  st_as_sf(coords = c("lon", "lat"), crs = 4326) 
+
+#inset <- mf_worldmap(water_col = "grey89", border_col = "black", land_col = "White", lon = -64.75, lat = 43.9,  pch = 0, cex = 2, lwd=4)
+
+sl <- locs %>% filter(str_detect(site, "S")) %>% distinct(site, .keep_all = TRUE) %>%  mutate(long = sf::st_coordinates(.)[,1], lat = sf::st_coordinates(.)[,2])
+fl <- locs %>% filter(str_detect(site, "F")) %>% distinct(site, .keep_all = TRUE) %>%  mutate(long = sf::st_coordinates(.)[,1], lat = sf::st_coordinates(.)[,2])
+bl <- locs %>% filter(str_detect(site, "B")) %>% distinct(site, .keep_all = TRUE) %>%  mutate(long = sf::st_coordinates(.)[,1], lat = sf::st_coordinates(.)[,2])
+ml <- locs %>% filter(str_detect(site, "M")) %>% distinct(site, .keep_all = TRUE) %>%  mutate(long = sf::st_coordinates(.)[,1], lat = sf::st_coordinates(.)[,2])
+
+labs <- tribble(~site, ~long, ~lat, "S, M, F", -66.02551, 43.40595, "B",-64.26642, 45.14374) %>%
+  st_as_sf(coords = c(Longitude = "long", Latitude = "lat"), crs = 4326, remove = FALSE)
+ 
 
 
-isl$centroid <- 
-  sf::st_transform(isl) %>% 
-  sf::st_centroid() %>% 
-  #sf::st_transform(., '+proj=longlat +ellps=GRS80 +no_defs')  %>% 
-  sf::st_geometry() 
+n <- ggplot() + geom_sf(data = ns, fill = NA) + theme_bw() +
+  geom_sf(data=labs , pch = 19,  cex = 3) +
+  geom_label_repel(data= labs,aes(x = long, y = lat, label = site), size = 4, min.segment.length = Inf, fontface = "bold") +
+  annotate("text", label = "Atlantic Ocean", x= -63.015, y = 44, size = 4, angle = 37) + xlab("Latitude") +ylab("Longitude") +
+  annotate("text", label = "Nova Scotia", x= -63.36, y = 45.15, size = 3, angle = 28) 
+  #scale_x_continuous(expand = c(0, 0)) +
+  #scale_y_continuous(expand = c(0, 0))
+  
+  # annotate("text", label = "S", x = -66.01451 , y = 43.41095, size = 12) +
+  # annotate("text", label = "B", x = -64.26842 , y = 45.14074, size = 12)
 
-padding <- 0.025
 
-graph <- function(x){
-  ggplot2::ggplot(isl[x,]) +
-    geom_sf(colour = "black", fill = NA) +
-    geom_sf(data = locs, color = "black", fill = "yellow", alpha = 0.7, size = 5, pch = 21) +
-    coord_sf(xlim = c(isl$centroid[[x]][1]-padding , 
-                      isl$centroid[[x]][1]+padding), 
-             ylim = c(isl$centroid[[x]][2]-padding , 
-                      isl$centroid[[x]][2]+padding), 
-             expand = FALSE) +
-    theme_bw()
-    #theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) 
-}
 
-plot_list <- lapply(X = 1:nrow(isl), FUN = graph)
+s <- ggplot() + geom_sf(data = seal, fill = NA) + 
+  #geom_sf(data=sl,color = "black", fill = "yellow", pch =21,  cex = 4.5) +
+  geom_sf(data=sl, pch =19,  cex = 4) +
+  geom_text_repel(data= sl,aes(x = long, y = lat, label = site), size = 5, min.segment.length = Inf, box.padding = 0.37, fontface = "bold") +
+  theme_void() + 
+  annotation_scale(width_hint = 0.3, line_width = 1, bar_cols = c("black"), height = unit(0.1, "cm"), location = "br") +
+  annotate("text", label = "Seal", x= -66.015, y = 43.422, size = 5, fontface = "italic")
 
-g <- cowplot::plot_grid(plotlist = plot_list,align = "v", nrow = 1) + 
-  draw_label("Mud", 0.47, 0.5, size = 18) +
-  draw_label("Flat", 0.45, 0.74, size = 18) +
-  draw_label("Seal", 0.12, 0.53, size = 18) +
-  draw_label("Boot", 0.81, 0.61, size = 18) +
-  #draw_label("Longitude", 0.5, 0.1, size = 18, vjust = -3.75) +
-  #draw_label("Latitude", 0.0, 0.5, size = 18, angle = 90, vjust = -2) +
-  annotation_north_arrow(pad_x = unit(1.5, "cm"), pad_y = unit(16.5, "cm"), style = north_arrow_minimal())
 
-print(g)
+b <- ggplot() + geom_sf(data = boot, fill = NA) + 
+  #geom_sf(data=bl, color = "black", fill = "yellow", pch =21,  cex = 4.5) +
+  geom_sf(data=bl, pch =19,  cex = 4) +
+  geom_text_repel(data= bl,aes(x = long, y = lat, label = site), size = 5, min.segment.length = Inf, box.padding = 0.4, fontface = "bold") + 
+  theme_void() +
+  annotation_scale(width_hint = 0.25, line_width = 1, bar_cols = c("black"), height = unit(0.1, "cm"), location = "br") +
+  annotate("text", label = "Boot", x= -64.275, y = 45.143, size = 5, fontface = "italic")
+
+
+f <- ggplot() + geom_sf(data = flat, fill = NA) +  
+  #geom_sf(data=fl, color = "black", fill = "yellow", pch =21,  cex = 4.5) +
+  geom_sf(data=fl, pch =19,  cex = 4) +
+  geom_text_repel(data= fl, aes(x = long, y = lat, label = site), size = 5, min.segment.length = Inf, box.padding = 0.4, fontface = "bold") + 
+  theme_void() +
+  annotation_scale(width_hint = 0.25, line_width = 1, bar_cols = c("black"), height = unit(0.1, "cm"), location = "br") +
+  annotate("text", label = "Flat", x= -66.0051, y = 43.5102, size = 5, fontface = "italic")
+ 
+m <- ggplot() + geom_sf(data = mud, fill = NA) + 
+  #geom_sf(data=ml, color = "black", fill = "yellow", pch =21,  cex = 4.5) +
+  geom_sf(data=ml, pch =19,  cex = 4) +
+  geom_text_repel(data= ml, aes(x = long, y = lat, label = site), size = 5, 
+                  min.segment.length = Inf, box.padding = 0.9, fontface = "bold") +  
+  theme_void() + 
+  annotation_scale(width_hint = 0.4, line_width = 1, bar_cols = c("black"), height = unit(0.1, "cm"), location = "br") + 
+  annotate("text", label = "Mud", x= -65.9908, y = 43.4949, size = 5, fontface = "italic")
+
+design <- "
+  124
+  325
+  "
+n + s + f + m + b + plot_layout(design = design, widths = c(0.5, 0.5))
+
+#n + s + f + m + b + plot_layout(design = design, widths = c(0.25))
+
+
+
+
+
+
+
+
 

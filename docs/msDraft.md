@@ -1,8 +1,8 @@
 The use of eDNA to assess remote coastal islands for the presence of
 invasive terrestrial mammals
 ================
-Doug Hynes
-2022-04-04
+DH
+2022-04-14
 
 **Abstract**–Coastal islands face grave threats such as sea level rise,
 development, and biological invasions. Yet, in many areas, basic
@@ -36,7 +36,10 @@ practitioners from various backgrounds begin to foray into eDNA methods
 (Biggs et al., 2015; Loeza-Quintana et al., 2021; Thomsen & Willerslev,
 2015; Yang et al., 2021), it remains to be seen exactly how, where, and
 when, this new tool can be utilized to inform long term conservation
-management.
+management…and how results compare to traditional, direct, methods of
+sampling mammals, via infrared cameras, hair tunnels, cage and snap
+trapping, some of which require intensive training, frequency checking,
+and extra levels of approvals and permitting.
 
 We sampled environmental DNA, extracted from water, to assess
 terrestrial mammalian threats and a “biodiversity bonus,” on coastal
@@ -59,25 +62,25 @@ implementation of a science-based conservation management and
 decision-making, by providing detailed, on-the-ground assessments of
 species and their threats (cite CS or others?).
 
-How robust is the technology? Other applications? Some studies show a
-correlation between the eDNA concentration and abundance (Everts et al.,
-2021)
+We had many questions from the onset. How robust would the process be,
+in practice? To what degree would the volume of the water sampled, or
+the qualities of the substrate, hydrologic conditions, or seaonality,
+effect results? Should we avoid turbid, highly acidic (citation?),
+brackish water when trtying to detect mammals?
 
-Alternative, direct methods of sampling mammals include infrared
-cameras, hair tunnels, cage and snap trapping, some of which require
-intensive training, frequency checking, and extra levels of approvals
-and permitting.
+Other potetnial applications? Some studies show a correlation between
+the eDNA concentration and abundance (Everts et al., 2021)
 
-As conservation actions are largely based on fine-scale knowledge about
-species distributions and their threats, we aim to: 1) conduct holistic
-inventories of problematic mammal species in a key coastal islands that
-haven not been recently evaluated, and 2) find ways to improve
-monitoring of wildlife and their threats by deploying new detection
-methods for invasive and problematic species through use of eDNA
-methods. Our studies will help assess the ecological value of the
-region, and inform decision makers involved in the transfer of lands for
-inclusion within the protected areas network known as the Atlantic
-Canada Archipelago.
+As conservation actions are largely based on the best available
+fine-scale knowledge about species distributions and their threats, we
+aim to: 1) conduct holistic inventories of problematic mammal species in
+a key coastal islands that haven not been recently evaluated, and 2)
+find ways to improve monitoring of wildlife and their threats by
+deploying new detection methods for invasive and problematic species
+through use of eDNA methods. Our studies will help assess the ecological
+value of the region, and inform decision makers involved in the transfer
+of lands for inclusion within the protected areas network known as the
+Atlantic Canada Archipelago.
 
 Discussion–we believe knowledge generated from eDNA may help identify
 and develop threat mitigation strategies and inform any future whole
@@ -94,20 +97,111 @@ samples, as a negative control. All samples were collected using a
 Smith-Root backpack sampler and self-preserving 1.2 micron filters.
 Samples were submitted to Precision Biomonitoring for analysis. Lab
 analysis will employ MiMammal universal primers, primers that have
-previously been shown to detect North American mammal species.
+previously been shown to detect North American mammal species. We used
+self-preserving filters made of polyethersulfone membranes with a pore
+size of 1.2 µm, and all measurements of environmental correlates were
+made with a Hanna HI98129 Combo pH/Conductivity/TDS tester.
+
+<img src="msDraft_files/figure-gfm/map-1.png" width="85%" style="display: block; margin: auto;" />
 
 ## Results
+
+A pairwise plot (**schloerke\_ggally\_2021?**) reveals the structure
+between environment correlates (e.g., pH), sampling parameters (e.g.,
+volume of water filtered), and results from the labratory analysis, such
+as DNA yield (ng/ml),
+
+of taxa detected (No. of Taxon), and the proportion of reads (“% reads”)
+for each sample station. The volume of water filtered, and DNA yield,
+showed little correlation where one might expect a positive one; the
+lack of correlation may be due in part to the accumulation of eDNA in
+small turbid pools, where filters, clogging quickly by debris (keeping
+sample volumes relatively low), where still able to capture eDNA.
+Freshwater was scarce across the extent of the islands visited, and
+turbid streams and pools likely served as important sources of fresh
+water for mammals. The negative correlation between proportion of reads
+among samples (“% reads”) and DNA yield suggests that samples with high
+yields contained greater amounts of non-targeted DNA, while observed
+positive association between reads and richness may be expected \[Bálint
+et al. (2016)).Positive correlations between total dissolved solids and
+conductivity are consistent with correlations described by others
+(Collins, M. K., Spear, Stephen F., Groves, John D., Williams, Lori A.,
+& Kuchta, Shawn R., 2019).
 
 To date, reads (i.e., sequences of base pairs that correspond to part of
 a DNA fragment) that correspond with 45 taxon have been detected from
 the 35 water samples (collected from islands Mud, Flat, Seal, and Boot).
 
-                                                            ![](msDraft_files/figure-gfm/tree-reads-1.png)<!-- -->
+A generalized pairs plot using sampling substrate, ie.e., brackish water
+(green) and freshwater (orange), to explore structure in the data set.
+Freshwater produced more reads despite lower DNA yields, suggesting
+freshwater samples contained more targeted (mammalian) eDNA…
+
+The number of point occurrences of taxa detected at sample stations (n
+in parertheses) on Flat (2), Mud (2), and Seal Island (26). House mouse
+(Mus musculus) and Muskat (Ondatra zibethicus) were detected at all
+stations, while detections at the rank of Muroidea or lower (i.e.,
+Murinae, Cricetidae) most likely represent brown rat (Rattus
+norvegicus), house mouse, or muskrat, but could include those of other
+rodents not yet detected on these islands. The subfamily Soricinae, and
+genus Sorex, likely represent Sorex cinereus, described as the only
+native small mammal on Seal Island (Stewart and Baker 1992). There were
+no detections of soricids at sample stations on Mud or Flat Island.
+Defections of human DNA in samples are not included, nor are any
+occurrences detected from the field blank.
+
+Occurrence of taxa in water samples (n = 10) taken from the same
+location (n = 5), but collected before and after heavy rains. I could
+collapse some taxa (e.g., Soricinae and Soricidae likely represent Sorex
+cinereus, or masked shrew) to improve the visual. Note that our only
+detections of brown rat and red squirrel within study extent (nsites =
+30) were from those samples collected immediately after a rainfall, and
+consistent with the suggestion of Lyet et al. (2021) to collect eDNA
+water samples \[from catchments\] following heavy rain to improve
+detection rates and hence increase survey efficiency. I think I could
+rework this figure to better reflect detections, overall, in relation to
+these “paired” sites. For example, Lepus americanus was detected at
+other “nonpaired” sites (and before the rain), but was only detected at
+“after rain” sites within the 5 paired sites (if that makes sense).
+
+Another look at the same subset of data shown in Figure 4 (i.e., 10
+samples from 5 sites, where we collected before and after rainfall). ,
+Note the increase in number of taxa detected in samples collected after
+the heavy rainfall. The 11 most common species detected in water samples
+(n = 30) as determined by MiMammal (12S) single locus metabarcoding
+analysis. The plot is broken down by species (common names), and where
+possible, detections of taxa at ranks greater than species were
+aggreagated into their respective group (e.g., reads of Lagomorpha
+collasped into detections of Lepus americanus). Samples are grouped by
+island (Seal, Mud, Flat). Empty space represents reads not identified at
+the corresponding taxonomic rank. Taxa representing less than 0.05% of
+reads per sample, on average, were filtered to improve the visual.
+
+<img src="msDraft_files/figure-gfm/correlogram-1.png" width="80%" style="display: block; margin: auto;" />
+
+                                                            <img src="msDraft_files/figure-gfm/treeReads-1.png" width="85%" style="display: block; margin: auto;" />
+
+## Discussion
+
+## Acknowledgements
+
+We thank Jay Cashubec at Nature Metrics for providing lab services and
+technical advice.
 
 ## Literature Cited
 
 <div id="refs" class="references csl-bib-body hanging-indent"
 line-spacing="2">
+
+<div id="ref-balint_millions_2016" class="csl-entry">
+
+Bálint, M., Bahram, M., Eren, A. M., Faust, K., Fuhrman, J. A., Lindahl,
+B., … Tedersoo, L. (2016). Millions of reads, thousands of taxa:
+Microbial community structure and associations analyzed via marker
+genes. *FEMS Microbiology Reviews*, *40*(5), 686–700. doi:
+[10.1093/femsre/fuw017](https://doi.org/10.1093/femsre/fuw017)
+
+</div>
 
 <div id="ref-biggs_using_2015" class="csl-entry">
 
@@ -118,6 +212,17 @@ monitoring programme for the great crested newt (Triturus cristatus).
 *Special Issue: Environmental DNA: A Powerful New Tool for Biological
 Conservation*, *183*, 19–28. doi:
 [10.1016/j.biocon.2014.11.029](https://doi.org/10.1016/j.biocon.2014.11.029)
+
+</div>
+
+<div id="ref-collins_m_k_searching_2019" class="csl-entry">
+
+Collins, M. K., Spear, Stephen F., Groves, John D., Williams, Lori A., &
+Kuchta, Shawn R. (2019). Searching for a Salamander: Distribution and
+Habitat of the Mudpuppy (Necturus maculosus) in Southeast Ohio Using
+<span class="nocase">eDNA</span> as a Rapid Assessment Technique. *The
+American Midland Naturalist*, *182*(2), 191–202. doi:
+[10.1674/0003-0031-182.2.191](https://doi.org/10.1674/0003-0031-182.2.191)
 
 </div>
 

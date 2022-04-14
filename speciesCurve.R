@@ -1,4 +1,4 @@
-## ---- treeReads --------
+## ---- species-sample-curve --------
 
 library(tidyverse)
 library(rotl)
@@ -118,7 +118,7 @@ finalDf <- data %>%
     sampleId == "64" ~ "B4",
     sampleId == "63" ~ "B5"))
 
-sumData2 <- finalDf %>%
+ssc <- finalDf %>%
   mutate(taxa = case_when(str_detect(taxa, "Lavin") ~ "Leuciscidae",
                           TRUE ~ taxa)) %>%
   mutate(taxa = case_when(str_detect(taxa, "Phoca") ~ "Phoca vitulina",
@@ -130,31 +130,17 @@ sumData2 <- finalDf %>%
   mutate(taxa = case_when(str_detect(taxa, "Equus") ~ "Equus caballus",
                           TRUE ~ taxa)) %>%
   group_by(site, taxa) %>%
-  mutate(reads2 = sum(reads)) %>% distinct(taxa, .keep_all = TRUE) %>%
-  mutate(readsT = round(reads2^(1/5), 1)) %>%
-  filter(!taxa == "Esociformes") %>%
-  select(site, taxa, readsT) %>%
-  pivot_wider(names_from = site, values_from = readsT) 
+  mutate(reads2 = sum(reads)) %>% 
+  group_by(site) %>%
+  #mutate(detections = length(reads2)) %>%
+  distinct(taxa, .keep_all = TRUE) %>%
+  #mutate(readsT = round(reads2^(1/5), 1)) %>%
+  select(site, taxa, reads2) %>%
+  pivot_wider(names_from = site, values_from = reads2) %>%
+  column_to_rownames(var = "taxa") %>%
+  replace(is.na(.), 0)
 
-
-taxonSearch <- tnrs_match_names(names = sumData2$taxa, context_name = "All life")
-sumData2$ottName <- unique_name(taxonSearch)
-sumData2$ottId <- taxonSearch$ott_id
-ottInTree <- ott_id(taxonSearch)[is_in_tree(ott_id(taxonSearch))]
-tre <- tol_induced_subtree(ott_ids = ottInTree)
-tre$tip.label <- strip_ott_ids(tre$tip.label, remove_underscores = TRUE)
-
-sum_numeric <- sumData2[, c(2:26)]
-rownames(sum_numeric) <- sumData2$ottName
-treeData <- phylo4d(tre, sum_numeric)
-
-p <- ggtree(treeData) + geom_tiplab(fontface = 3, size = 3.25) + ggexpand(5, side = "h") + 
-  geom_cladelab(23, "Mammalia", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
-  geom_cladelab(35, "Aves/Reptilia", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")+
-  geom_cladelab(36, "Actinopterygii", offset = -12, offset.text= -4.5, angle = 90, barsize = 2, hjust = "center")
-
-
-sumData3 <- finalDf %>%
+ssc2 <- finalDf %>%
   mutate(taxa = case_when(str_detect(taxa, "Lavin") ~ "Leuciscidae",
                           TRUE ~ taxa)) %>%
   mutate(taxa = case_when(str_detect(taxa, "Phoca") ~ "Phoca vitulina",
@@ -166,30 +152,12 @@ sumData3 <- finalDf %>%
   mutate(taxa = case_when(str_detect(taxa, "Equus") ~ "Equus caballus",
                           TRUE ~ taxa)) %>%
   group_by(site, taxa) %>%
-  filter(!taxa == "Esociformes") %>%
-  mutate(reads2 = sum(reads)) %>% distinct(taxa, .keep_all = TRUE) %>%
-  mutate(readsT = round(reads2^(1/5), 1)) %>%
-  #mutate(readsT = round(log(reads2), 1)) %>%
-  select(site, taxa, readsT) %>%
-  filter(taxa %in% tre$tip.label) %>% 
-  ungroup() %>%
-  complete(site, taxa) %>% replace_na(list(readsT = 0)) %>%
-  slice(mixedorder(site))
-
-p2 <- ggplot(sumData3, aes(x=fct_inorder(as.factor(site)), y=taxa)) + 
-  geom_tile(aes(fill=readsT), color = "gray") + scale_fill_scico(palette = "oslo", direction = -1, begin = 0, end = 1) + 
-  xlab("Sites") + ylab(NULL) + labs(fill = expression(sqrt("Reads", 5))) +
-  theme(axis.text.y=element_blank()) +
-  scale_x_discrete(expand = c(0,0)) +
-  scale_y_discrete(expand = c(0,0)) +
-  theme(legend.title = element_text(size = 11)) +
-  theme(
-    axis.ticks.length.x = unit(0.15, "cm"),
-    axis.ticks.length.y = unit(0.15, "cm"),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    panel.background = element_blank()) 
-
-
-p3 <- p2 %>% insert_left(p, width = 0.36)
-
-print(p3)
+  mutate(reads2 = sum(reads)) %>% 
+  group_by(site) %>%
+  #mutate(detections = length(reads2)) %>%
+  distinct(taxa, .keep_all = TRUE) %>%
+  #mutate(readsT = round(reads2^(1/5), 1)) %>%
+  select(site, taxa, reads2) %>%
+  pivot_wider(names_from = taxa, values_from = reads2) %>%
+  column_to_rownames(var = "site") %>%
+  replace(is.na(.), 0)

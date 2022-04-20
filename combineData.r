@@ -13,7 +13,7 @@ library(sf)
 
 ########################################################################
 #'* Enter path to root directory of eDNA data here*
-wd <- ""
+wd <- "C:/Users/HynesD/Documents/eDNA/data/WD46410AB"
 #Ex: wd <- "C:/Users/macaskilln/OneDrive - EC-EC/eDnaDataCombination"
 
 #'* Folder name of Smith-Root CSVs here*
@@ -25,7 +25,7 @@ filenames <- list.files(getwd(), pattern = "*.csv", recursive = TRUE, full.names
 
 ########################################################################
 #'* If there are any Smith-Root samples you wish to discard, enter them here*
-testSamples <- c()
+testSamples <- c("01", "02", "03", "04", "06", "07", "09", "10", "11", "16", "17", "19", "36", "47", "56", "57", "58", "66", "68")
 #Ex: testSamples <- c("01", "02", "03", "04", "06", "07", "09", "10", "11", "16", "17", "19", "36", "47", "56", "57", "58") #not actual samples; extra CSV files created when resetting pump
 ########################################################################
 
@@ -37,7 +37,6 @@ sampler <- filenames %>%
   mutate(sampleId = substr(file_name, 4,5)) %>%
   filter(!sampleId %in% testSamples)
 
-setwd(wd)
 
 #Summarize important Smith-Root data for each sample
 sumSampler <- sampler %>% 
@@ -65,7 +64,7 @@ mapview(latLonMap)
 
 # 2) DNA Yield --------------------------------------------------------------------------------------
 #'* Extract DNA Yield data for each sample*
-
+setwd("C:/Users/HynesD/Documents/eDNA/data")
 dna <- read_csv(paste(getwd(), "dnaYields.csv", sep="/"))
 dna <- dna %>% select(
   extractionId = "Extraction ID",
@@ -78,8 +77,9 @@ dna <- dna %>% select(
 #'* Collect field site data here*
 
 fieldData <- read_csv(paste(getwd(), "eDNAProtectedAreas_0.csv", sep="/"), locale = locale(encoding = "latin1"))
+names(fieldData) <- gsub(" \\s*\\([^\\)]+\\)", "", names(fieldData))
 
-fieldData <- fieldData %>% 
+fieldData <- fieldData %>%
   select(
     sampleId = "Sample ID:",
     locality = "Locality:",
@@ -88,9 +88,9 @@ fieldData <- fieldData %>%
     comments,
     substrate = "Substrate type:",
     pH = "pH:",
-    tempCelsius = "Temperature (?C):",
-    tdsPpm = "TDS (ppm):",
-    eC = "Electrical Conductivity (?S):") %>%
+    tempCelsius = "Temperature:",
+    tdsPpm = "TDS:",
+    eC = "Electrical Conductivity:") %>%
   mutate(sampleId = as.character(sampleId))
 
 ########################################################################
@@ -98,11 +98,14 @@ fieldData <- fieldData %>%
 
 fieldData <- rbind(
   tribble(~sampleId, ~locality, ~ecosystem, ~ecosystemNotes, ~comments, ~substrate, ~pH, ~tempCelsius, ~tdsPpm, ~eC, #Add samples below!
-
+              "15", "North Mud", "Pond", "Barachois pond", "", "Brackish water", 7.51, 22.8, 651, 1419,
+              "29", "Seal Island", "Wetland", "Emergence of sub-surface stream", "two water samples taken at this location", "Freshwater", 4.24, 19.5, 226, 500,
+              "35", "Seal Island", "Pond", "", "", "Freshwater", 3.98,	20.3,	352, 659,
+              "39", "Seal Island", "Pond", "behind barrier dune", "", "Brackish water", 6.25, 20.1, 688, 1550
   ),
   fieldData
 ) %>%
-  filter(!sampleId %in% c() ) %>% #Remove samples by ID here!
+  filter(!sampleId %in% c(0) ) %>% #Remove samples by ID here!
   add_column() #Add additional columns here!
 
 #Ex:
@@ -145,7 +148,7 @@ for (i in 0:3) {
   tables[[i+1]] <- eDna[seq_len(ncol(eDna)) %% 4 == i]
   
   colnames(tables[[i+1]]) <- as.character(numSamples)
-  tables[[i+1]] <- pivot_longer(tables[[i+1]], 1:31, names_to = "id", values_to = varNames[i+1]) %>%
+  tables[[i+1]] <- pivot_longer(tables[[i+1]], 1:37, names_to = "id", values_to = varNames[i+1]) %>%
     mutate(extractionId = unclass(glue("CW{id}"))) %>% select(extractionId, varNames[i+1])
 }
 
@@ -156,7 +159,7 @@ eDnaData <- cbind(tables[[2]], tables[[3]], tables[[4]], tables[[1]])[,c(1,2,4,6
 eDnaData <- filter(eDnaData, rowSums(is.na(eDnaData)) != 4)
 
 # Join all data together
-finalDf <- inner_join(allData, eDnaData)
+finalDf <- left_join(allData, eDnaData)
 
 # Collect number of detections for each species
 detections <- finalDf %>% group_by(sampleId, latitude, longitude, taxa, percentReads) %>% summarise() %>% pivot_wider(names_from = taxa, values_from = percentReads)

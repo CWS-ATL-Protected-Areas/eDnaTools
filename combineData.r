@@ -10,20 +10,21 @@ library(leafem)
 library(sf)
 library(lubridate)
 
-#1) Sampler --------------------------------------------------------------------------------------
-#'* Combines information from sampler CSVs into one place, also allows for some location visualization*
+#1) Smith-Root backpack sampler --------------------------------------------------------------------------------------
+#'*Combines CSVs from Smith-Root backpack sampler into one place, also allows for some location visualization*
 
 ########################################################################
 #'* Enter path to root directory of eDNA data here*
-wd <- "C:/Users/HynesD/Documents/eDNA/data"
-#Ex: wd <- "C:/Users/macaskilln/OneDrive - EC-EC/eDnaDataCombination"
+wd <- "C:/Users/hynesd/OneDrive - EC-EC/ProtectedAreasMonitoring/eDNA"
 
 #'* Folder name of Smith-Root CSVs here*
 #setwd(paste(wd, "", sep="/"))
-setwd(paste(wd, "WD46410AB", sep="/"))
+setwd(paste(wd, "smithRootSampler/WF1661142-Sackville", sep="/"))
+setwd(paste(wd, "smithRootSampler", sep="/"))
+
 ########################################################################
 
-filenames <- list.files(getwd(), pattern = "*.csv", recursive = TRUE, full.names = FALSE)
+filenames <- list.files(getwd(), pattern = "*.csv", recursive = TRUE, full.names = TRUE)
 
 ########################################################################
 #'* If there are any Smith-Root samples you wish to discard, enter them here*
@@ -35,17 +36,25 @@ testSamples <- c("1", "2", "3", "4", "6", "7", "9",
 ########################################################################
 
 
-
-#Collates Smith-Root CSV information into one dataframe
-#Skip=12: information from these files start on line 13
+#Collates CSVs from Smith-Root samnplers (i.e., devices "WF1661142-Sackville" and "WD46410AB-Dartmouth") 
+#Skip=12: information from these CSV files start on line 13
 sampler <- filenames %>%
-  set_names() %>%
-  map_df(read_csv, .id = "file_name", skip = 12) %>%
-  mutate(sampleId = str_remove(file_name, "^0+")) %>%
-  mutate(sampleId = tools::file_path_sans_ext(basename(sampleId))) %>%
-  #mutate(sampleId = substr(file_name, 4,5)) %>%
-  filter(!sampleId %in% testSamples)
+  set_names() %>%  #labels the "filename" vector with that vector’s values (i.e., the paths)
+  map_df(read_csv, .id = "filePath", skip = 12) %>%
+  mutate(smithRootId = str_sub(filePath, start = -9, end = -5)) %>%
+  mutate(smithRootId = str_remove(smithRootId, "^0+")) %>%
+  mutate(samplerSerial = str_sub(filePath, start = -29, end = -21)) %>%
+  unite("sampleId", smithRootId, samplerSerial, sep = "-", remove = FALSE)
+  #filter(!sampleId %in% testSamples)
 
+
+WF1661142 <- filenames %>%
+  set_names() %>%  #labels the "filename" vector with that vector’s values (i.e., the paths)
+  map_df(read_csv, .id = "filePath", skip = 12) %>%
+  mutate(Id = str_sub(filePath, start = -9, end = -5)) %>%
+  mutate(Id = str_remove(Id, "^0+")) %>%
+  add_column(samplerSerial = "WF1661142") %>%
+  unite("sampleId", Id, samplerSerial, sep = "-")
 
 #Summarize important Smith-Root data for each sample
 sumSampler <- sampler %>% 
@@ -79,7 +88,7 @@ latLon <- sampler %>%
                               TRUE ~ longitude)) 
  
 # Map locations
-latLonMap <- latLon %>% st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove = FALSE) #%>% st_jitter(0.005)
+latLonMap <- latLon %>% st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove = FALSE) %>% st_jitter(0.005)
 # latLonMap2 <- latLon %>% filter(as.numeric(sampleId) > 96 & !sampleId == 114) %>%
  #  st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove = FALSE) 
 

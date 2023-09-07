@@ -1,0 +1,16 @@
+Serial Number,WF1661142
+Sample ID,00016
+Start Time,2023-06-09 16:49:02 UTC
+Duration,0:00:04
+Total Volume (l),0.01
+Distance (m),0
+Peak Pressure (psi),2.9
+Avg Flow (l/min),0.1
+Avg Rate (mL/m),21.3
+Avg Speed (m/s),0.1
+
+
+Date (UTC),Elapsed time (s),Volume (l),Pressure (psi),Flow (l/min),Rate (mL/m),Speed (m/s),Latitude,Longitude,Elevation (m),Accuracy (+/- m)
+2023-06-09 16:49:02,0,0.00,0.34,0.00,0.00,0.07,45.906667,-64.370171,17.9,2.8
+2023-06-09 16:49:04,2,0.00,0.54,0.00,0.00,0.06,45.906666,-64.370171,18.0,2.8
+2023-06-09 16:49:06,4,0.01,2.86,0.26,63.96,0.07,45.906668,-64.370173,17.7,2.8

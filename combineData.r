@@ -1,8 +1,8 @@
-# Combines eDNA project data from multiple sources into a single dataframe and outputs as a CSV
-# Certain sections must be configured to fit your data, those can be found between the rows of
-# Once configured, program should run in one go (Ctrl + Shift + Enter)
-# Or line by line (Ctrl + Shift)
+#
+#Combines eDNA project data from multiple sources into a single dataframe and outputs as a CSV
+#
 
+library(here)
 library(tidyverse)
 library(glue)
 library(mapview)
@@ -11,20 +11,9 @@ library(sf)
 library(lubridate)
 
 #1) Smith-Root backpack sampler --------------------------------------------------------------------------------------
-#'*Combines CSVs from Smith-Root backpack sampler into one place, also allows for some location visualization*
+#Combines CSVs from Smith-Root backpack sampler into one place, also allows for some location visualization
 
-########################################################################
-#'* Enter path to root directory of eDNA data here*
-wd <- "C:/Users/hynesd/OneDrive - EC-EC/ProtectedAreasMonitoring/eDNA"
-
-#'* Folder name of Smith-Root CSVs here*
-#setwd(paste(wd, "", sep="/"))
-setwd(paste(wd, "smithRootSampler/WF1661142-Sackville", sep="/"))
-setwd(paste(wd, "smithRootSampler", sep="/"))
-
-########################################################################
-
-filenames <- list.files(getwd(), pattern = "*.csv", recursive = TRUE, full.names = TRUE)
+filenames <- list.files(path = here::here("smithRootSampler"), pattern = "*.csv", recursive = TRUE, full.names = TRUE)
 
 ########################################################################
 #'* If there are any Smith-Root samples you wish to discard, enter them here*
@@ -48,13 +37,6 @@ sampler <- filenames %>%
   #filter(!sampleId %in% testSamples)
 
 
-WF1661142 <- filenames %>%
-  set_names() %>%  #labels the "filename" vector with that vector’s values (i.e., the paths)
-  map_df(read_csv, .id = "filePath", skip = 12) %>%
-  mutate(Id = str_sub(filePath, start = -9, end = -5)) %>%
-  mutate(Id = str_remove(Id, "^0+")) %>%
-  add_column(samplerSerial = "WF1661142") %>%
-  unite("sampleId", Id, samplerSerial, sep = "-")
 
 #Summarize important Smith-Root data for each sample
 sumSampler <- sampler %>% 
@@ -69,7 +51,7 @@ sumSampler <- sampler %>%
     mutate(dateTime = with_tz(dateTime, "America/Halifax")) %>%
     bind_rows(
   tribble(~sampleId, ~waterVolumeL, ~dateTime, #Add samples below!
-          "69", 2.00, ymd_hms("2022-04-18 13:25:00")
+          "69-WD46410AB", 2.00, ymd_hms("2022-04-18 13:25:00")
         ))
 
 
@@ -127,7 +109,7 @@ allDna <- rbind(dna, dna2)
 # 3) Field site --------------------------------------------------------------------------------------
 #'* Collect field site data here*
 
-fieldData <- read_csv(paste(getwd(), "eDNAProtectedAreas_0.csv", sep="/"), locale = locale(encoding = "latin1"))
+fieldData <- read_csv(paste(getwd(), "Survey123/eDNAProtectedAreas_0.csv", sep="/"), locale = locale(encoding = "latin1"))
 names(fieldData) <- gsub(" \\s*\\([^\\)]+\\)", "", names(fieldData))
 
 fieldData <- fieldData %>%
